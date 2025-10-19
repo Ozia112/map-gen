@@ -1,16 +1,37 @@
 """
 Módulo de configuración de parámetros
+Separado en: Configuración del servidor y configuración del mapa
 """
+
+# ============================================================
+# CONFIGURACIÓN DEL SERVIDOR
+# ============================================================
+
+SERVER_CONFIG = {
+    'default_host': '127.0.0.1',
+    'default_port': 8080,
+    'allow_lan': False,  # Si es True, usa 0.0.0.0
+    'window_size': (1280, 800),
+}
+
+# ============================================================
+# CONFIGURACIÓN DEL MAPA
+# ============================================================
 
 # Parámetros de generación del terreno
 TERRAIN_PARAMS = {
-    'terrain_roughness': 50,
     'height_variation': 8.0,
+    'terrain_roughness': 50,
     'seed': 42,
-    'crater_enabled': False,
-    'num_craters': 3,
-    'crater_size': 0.5,
-    'crater_depth': 0.6
+    'base_height': 20.0,  # Altura mínima del "pastel"
+}
+
+# Parámetros de cráteres
+CRATER_PARAMS = {
+    'enabled': False,
+    'density': 3,
+    'size': 0.5,
+    'depth': 0.6
 }
 
 # Parámetros de visualización
@@ -19,6 +40,7 @@ VISUAL_PARAMS = {
     'elevation_angle': 20,
     'azimuth_angle': 340,
     'line_color': '#ff7825',
+    'sea_level': 0.0,        # Nivel del mar (líneas bajo este nivel son punteadas)
     # Controles de ejes y grilla (UI web)
     'show_axis_labels': True,
     'grid_color': '#00ffff',
@@ -26,7 +48,7 @@ VISUAL_PARAMS = {
     'grid_opacity': 0.35     # 0..1 para mpl
 }
 
-# Configuración de la ventana
+# Configuración de la visualización matplotlib (legacy)
 WINDOW_CONFIG = {
     'figsize': (16, 9),
     'facecolor': '#1a1a1a',
@@ -38,11 +60,23 @@ WINDOW_CONFIG = {
     }
 }
 
+# Configuración de renderizado
+RENDER_CONFIG = {
+    'preview_dpi': 150,
+    'export_dpi': 300,
+    'default_format': 'png',
+    'available_scales': [1, 2, 4],
+}
+
 # Dimensiones del terreno (16:9)
 TERRAIN_SIZE = {
     'width': 160,
     'height': 90
 }
+
+# Valores por defecto para dimensiones
+DEFAULT_WIDTH = 160
+DEFAULT_HEIGHT = 90
 
 # Backend y límites de robustez
 # Backend de ruido: 'perlin' o 'fbm' (fbm recomendado para alto rendimiento)
