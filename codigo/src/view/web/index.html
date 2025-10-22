@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VISTAR - Mapa Topográfico 3D</title>
+  <!-- Favicon: asegúrate de colocar 'menu options.png' en esta carpeta -->
+  <link rel="icon" type="image/png" href="menu options.png" />
+  <link rel="stylesheet" href="styles.css?v=40" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "/vendor/three/0.157.0/build/three.module.js"
+      }
+    }
+  </script>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    .viewport { position: relative; width: 100%; height:60vh; background: #000; }
+    .viewport canvas {position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  </style>
+</head>
+<body>
+  <!-- Top Label -->
+  <div class="top-label">VISTAR - 2D Preview</div>
+
+  <div class="app-layout">
+    <!-- Main Viewport Area -->
+    <main class="main-content">
+      <div class="preview-container">
+        <div class="preview-header">
+          <span class="preview-title">Vista Previa</span>
+          <button id="lab3dButton" class="lab-button">Laboratorio 3D</button>
+        </div>
+        <div class="preview-viewport">
+          <img id="preview" src="" alt="Vista previa del mapa">
+        </div>
+      </div>
+    </main>
+
+    <!-- Lateral Buttons (Options/Export) -->
+    <div class="lateral-buttons-container">
+      <button id="lateral-button-options" class="lateral-button" title="Opciones">
+        Opciones
+      </button>
+      <button id="lateral-button-export" class="lateral-button lateral-button-export" title="Exportar">
+        Exportar
+      </button>
+    </div>
+
+    <!-- Options Menu -->
+    <div id="lateral-menu-options" class="lateral-menu lateral-menu-options hidden">
+      <div class="menu-header">
+        <h3 class="menu-title">Opciones</h3>
+        <button id="closeOptionsBtn" class="close-button" title="Cerrar">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="1" width="20" height="20" rx="10" stroke="#FAFAFA" stroke-width="2"/>
+            <path d="M17 11C17 14.3137 14.3137 17 11 17C7.68629 17 5 14.3137 5 11C5 7.68629 7.68629 5 11 5C14.3137 5 17 7.68629 17 11Z" fill="#FAFAFA"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="menu-section">
+        <!-- Semilla Aleatoria -->
+        <div class="menu-param">
+          <span class="menu-label-block">Semilla:</span>
+          <div class="menu-input-with-button">
+            <input type="text" id="seedInput" class="menu-input-small" value="000042" />
+            <button id="randomSeedBtn" class="reset-button" title="Generar semilla aleatoria">
+              <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="29" height="29" rx="14.5" fill="#030303"/>
+                <path d="M7.61108 19.899L7.20723 20.1938L7.21207 20.2004L7.21713 20.2069L7.61108 19.899ZM8.01675 9.41145C8.17817 9.1874 8.1274 8.87492 7.90335 8.7135C7.67931 8.55207 7.36682 8.60284 7.2054 8.82689L7.61107 9.11917L8.01675 9.41145ZM8.61845 7.57986C8.60022 7.8554 8.8088 8.09356 9.08434 8.11179L13.5745 8.40897C13.8501 8.42721 14.0882 8.21862 14.1064 7.94308C14.1247 7.66754 13.9161 7.42939 13.6406 7.41115L9.64929 7.14699L9.91345 3.15573C9.93169 2.88019 9.7231 2.64203 9.44756 2.6238C9.17202 2.60556 8.93387 2.81415 8.91563 3.08969L8.61845 7.57986ZM15.225 5.78588L15.2662 5.28742L15.2538 5.28671L15.225 5.78588ZM21.4035 9.11917L21.0095 9.42708C23.8162 13.0182 23.1804 18.2046 19.5893 21.0113L19.8972 21.4053L20.2051 21.7992C24.2313 18.6524 24.9442 12.8375 21.7974 8.81127L21.4035 9.11917ZM19.8972 21.4053L19.5893 21.0113C15.9982 23.818 10.8117 23.1822 8.00502 19.5911L7.61108 19.899L7.21713 20.2069C10.3639 24.2331 16.1788 24.946 20.2051 21.7992L19.8972 21.4053ZM7.61108 19.899L8.01492 19.6042C6.71315 17.8209 5.05347 13.5244 8.01675 9.41145L7.61107 9.11917L7.2054 8.82689C3.89014 13.4283 5.76707 18.2209 7.20723 20.1938L7.61108 19.899ZM9.11736 7.61288L9.4468 7.98901C10.6779 6.91077 11.5542 6.47625 12.3644 6.30463C13.2028 6.12705 14.0054 6.21644 15.1963 6.28505L15.225 5.78588L15.2538 5.28671C14.1438 5.22275 13.1625 5.11339 12.1572 5.32633C11.1238 5.54523 10.0967 6.0905 8.78793 7.23675L9.11736 7.61288ZM15.225 5.78588L15.1839 6.28419C17.3995 6.46704 19.5332 7.53823 21.0095 9.42708L21.4035 9.11917L21.7974 8.81127C20.1422 6.69356 17.7481 5.49241 15.2662 5.28758L15.225 5.78588Z" fill="#FAFAFA"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Color de Líneas -->
+        <div class="menu-param">
+          <span class="menu-label-block">Color de líneas:</span>
+          <div class="color-picker-group">
+            <input type="text" id="lineColorHex" class="menu-input-hex" value="#FF7825" />
+            <div class="color-swatch" id="colorSwatch"></div>
+            <input type="color" id="lineColorInput" class="color-input-hidden" value="#FF7825" />
+          </div>
+        </div>
+
+        <!-- Altura Mínima (Base Height) -->
+        <div class="menu-param">
+          <span class="menu-label-block">Altura mínima:</span>
+          <div class="slider-with-value">
+            <input type="range" id="baseHeightSlider" class="menu-slider" min="5" max="30" step="1" value="20" />
+            <input type="text" id="baseHeightValue" class="value-input-tiny" value="20" />
+          </div>
+        </div>
+
+        <!-- Nivel del Mar -->
+        <div class="menu-param">
+          <span class="menu-label-block">Nivel del mar:</span>
+          <div class="slider-with-value">
+            <input type="range" id="seaLevelSlider" class="menu-slider" min="0" max="30" step="1" value="0" />
+            <input type="text" id="seaLevelValue" class="value-input-tiny" value="0" />
+          </div>
+        </div>
+
+        <!-- Mostrar Ejes y Cuadrícula -->
+        <div class="menu-param">
+          <div class="menu-checkbox-row">
+            <span class="menu-label-inline">Mostrar ejes y cuadrícula:</span>
+            <label class="control-row-checkbox">
+              <input type="checkbox" id="gridToggle" class="checkbox-input" checked>
+              <span class="checkbox-custom"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Grid Options (collapsible) -->
+        <div id="gridOptions" class="grid-options">
+          <div class="menu-param">
+            <span class="menu-label-block">Color de cuadrícula:</span>
+            <div class="color-picker-group">
+              <input type="text" id="gridColorHex" class="menu-input-hex" value="#00FFFF" />
+              <div class="color-swatch" id="gridColorSwatch"></div>
+              <input type="color" id="gridColorInput" class="color-input-hidden" value="#00FFFF" />
+            </div>
+          </div>
+
+          <div class="menu-param">
+            <span class="menu-label-block">Grosor:</span>
+            <div class="slider-with-value">
+              <input type="range" id="gridWidthSlider" class="menu-slider" min="1" max="6" step="1" value="2" />
+              <input type="text" id="gridWidthValue" class="value-input-tiny" value="2px" />
+            </div>
+          </div>
+
+          <div class="menu-param">
+            <span class="menu-label-block">Opacidad:</span>
+            <div class="slider-with-value">
+              <input type="range" id="gridOpacitySlider" class="menu-slider" min="1" max="255" step="1" value="89" />
+              <input type="text" id="gridOpacityValue" class="value-input-tiny" value="89" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export Menu -->
+    <div id="lateral-menu-export" class="lateral-menu lateral-menu-export hidden">
+      <div class="menu-header">
+        <h3 class="menu-title">Exportar</h3>
+        <button id="closeExportBtn" class="close-button" title="Cerrar">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="1" width="20" height="20" rx="10" stroke="#FAFAFA" stroke-width="2"/>
+            <path d="M17 11C17 14.3137 14.3137 17 11 17C7.68629 17 5 14.3137 5 11C5 7.68629 7.68629 5 11 5C14.3137 5 17 7.68629 17 11Z" fill="#FAFAFA"/>
+          </svg>
+        </button>
+      </div>
+      <div class="menu-section">
+        <div class="menu-item">
+          <span class="menu-label">Formato:</span>
+          <select id="exportFormat" class="menu-select">
+            <option value="png">PNG</option>
+            <option value="jpg">JPG</option>
+            <option value="svg">SVG</option>
+          </select>
+        </div>
+        <div class="menu-item" id="exportScaleSection">
+          <span class="menu-label">Escala:</span>
+          <div class="button-group">
+            <button id="exportScale1x" class="scale-button active" data-scale="1">x1</button>
+            <button id="exportScale2x" class="scale-button" data-scale="2">x2</button>
+            <button id="exportScale4x" class="scale-button" data-scale="4">x4</button>
+          </div>
+        </div>
+        <div class="menu-item menu-item-vertical">
+          <span class="menu-label">Guardar en:</span>
+          <div class="path-input-container">
+            <div id="exportPathDisplay" class="path-display">Descargas</div>
+            <button id="exportSelectPath" class="explore-button" title="Seleccionar carpeta">
+              <svg width="33" height="34" viewBox="0 0 33 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1" y="1.3335" width="31" height="31" rx="4" fill="#434343"/>
+                <rect x="1" y="1.3335" width="31" height="31" rx="4" stroke="#838383" stroke-width="2"/>
+                <path d="M9.39205 25.4954C8.92614 25.4954 8.52557 25.3307 8.19034 25.0011C7.85511 24.6659 7.6875 24.2625 7.6875 23.7909C7.6875 23.325 7.85511 22.9272 8.19034 22.5977C8.52557 22.2625 8.92614 22.0949 9.39205 22.0949C9.85795 22.0949 10.2585 22.2625 10.5938 22.5977C10.929 22.9272 11.0966 23.325 11.0966 23.7909C11.0966 24.1034 11.017 24.3903 10.858 24.6517C10.7045 24.9074 10.5 25.1119 10.2443 25.2653C9.98864 25.4187 9.70455 25.4954 9.39205 25.4954ZM16.1889 25.4954C15.723 25.4954 15.3224 25.3307 14.9872 25.0011C14.652 24.6659 14.4844 24.2625 14.4844 23.7909C14.4844 23.325 14.652 22.9272 14.9872 22.5977C15.3224 22.2625 15.723 22.0949 16.1889 22.0949C16.6548 22.0949 17.0554 22.2625 17.3906 22.5977C17.7259 22.9272 17.8935 23.325 17.8935 23.7909C17.8935 24.1034 17.8139 24.3903 17.6548 24.6517C17.5014 24.9074 17.2969 25.1119 17.0412 25.2653C16.7855 25.4187 16.5014 25.4954 16.1889 25.4954ZM22.9858 25.4954C22.5199 25.4954 22.1193 25.3307 21.7841 25.0011C21.4489 24.6659 21.2812 24.2625 21.2812 23.7909C21.2812 23.325 21.4489 22.9272 21.7841 22.5977C22.1193 22.2625 22.5199 22.0949 22.9858 22.0949C23.4517 22.0949 23.8523 22.2625 24.1875 22.5977C24.5227 22.9272 24.6903 23.325 24.6903 23.7909C24.6903 24.1034 24.6108 24.3903 24.4517 24.6517C24.2983 24.9074 24.0938 25.1119 23.8381 25.2653C23.5824 25.4187 23.2983 25.4954 22.9858 25.4954Z" fill="#838383"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <button id="exportConfirm" class="menu-button">Exportar</button>
+      </div>
+    </div>
+
+    <!-- Side Panel (Parameters) -->
+    <aside id="paramsPanel" class="side-panel">
+      <!-- Terreno Section -->
+      <div class="section">
+        <h3 class="section-title">Terreno:</h3>
+        
+        <div class="param-modifier">
+          <label>Variacion de altura: <input type="text" id="vhVal" class="value-input" value="8.0" /></label>
+          <input type="range" id="vh" class="slider" min="1" max="20" step="0.5" value="8.0">
+        </div>
+
+        <div class="param-modifier">
+          <label>Rugosidad: <input type="text" id="roughVal" class="value-input" value="50%" /></label>
+          <input type="range" id="rough" class="slider" min="0" max="100" step="5" value="50">
+        </div>
+
+        <div class="param-modifier">
+          <label>Densidad de líneas: <input type="text" id="densVal" class="value-input" value="30" /></label>
+          <input type="range" id="dens" class="slider" min="10" max="40" step="5" value="30">
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- Rotation Section -->
+      <div class="section">
+        <div class="section-header">
+          <h3 class="section-title">Rotación:</h3>
+          <button id="resetRotationBtn" class="reset-button" title="Restablecer rotación">
+            <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="29" height="29" rx="14.5" fill="#030303"/>
+              <path d="M7.61108 19.899L7.20723 20.1938L7.21207 20.2004L7.21713 20.2069L7.61108 19.899ZM8.01675 9.41145C8.17817 9.1874 8.1274 8.87492 7.90335 8.7135C7.67931 8.55207 7.36682 8.60284 7.2054 8.82689L7.61107 9.11917L8.01675 9.41145ZM8.61845 7.57986C8.60022 7.8554 8.8088 8.09356 9.08434 8.11179L13.5745 8.40897C13.8501 8.42721 14.0882 8.21862 14.1064 7.94308C14.1247 7.66754 13.9161 7.42939 13.6406 7.41115L9.64929 7.14699L9.91345 3.15573C9.93169 2.88019 9.7231 2.64203 9.44756 2.6238C9.17202 2.60556 8.93387 2.81415 8.91563 3.08969L8.61845 7.57986ZM15.225 5.78588L15.2662 5.28742L15.2538 5.28671L15.225 5.78588ZM21.4035 9.11917L21.0095 9.42708C23.8162 13.0182 23.1804 18.2046 19.5893 21.0113L19.8972 21.4053L20.2051 21.7992C24.2313 18.6524 24.9442 12.8375 21.7974 8.81127L21.4035 9.11917ZM19.8972 21.4053L19.5893 21.0113C15.9982 23.818 10.8117 23.1822 8.00502 19.5911L7.61108 19.899L7.21713 20.2069C10.3639 24.2331 16.1788 24.946 20.2051 21.7992L19.8972 21.4053ZM7.61108 19.899L8.01492 19.6042C6.71315 17.8209 5.05347 13.5244 8.01675 9.41145L7.61107 9.11917L7.2054 8.82689C3.89014 13.4283 5.76707 18.2209 7.20723 20.1938L7.61108 19.899ZM9.11736 7.61288L9.4468 7.98901C10.6779 6.91077 11.5542 6.47625 12.3644 6.30463C13.2028 6.12705 14.0054 6.21644 15.1963 6.28505L15.225 5.78588L15.2538 5.28671C14.1438 5.22275 13.1625 5.11339 12.1572 5.32633C11.1238 5.54523 10.0967 6.0905 8.78793 7.23675L9.11736 7.61288ZM15.225 5.78588L15.1839 6.28419C17.3995 6.46704 19.5332 7.53823 21.0095 9.42708L21.4035 9.11917L21.7974 8.81127C20.1422 6.69356 17.7481 5.49241 15.2662 5.28758L15.225 5.78588Z" fill="#FAFAFA"/>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="param-modifier">
+          <label>Eje Z: <input type="text" id="azVal" class="value-input" value="340°" /></label>
+          <input type="range" id="azRange" class="slider" min="0" max="360" step="1" value="340">
+        </div>
+
+        <div class="param-modifier">
+          <label>Elevación: <input type="text" id="elVal" class="value-input" value="24°" /></label>
+          <input type="range" id="elRange" class="slider" min="0" max="90" step="1" value="24">
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- Craters Section -->
+      <div class="section">
+        <div class="section-header">
+          <h3 class="section-title">Cráteres:</h3>
+          <label class="control-row-checkbox">
+            <input type="checkbox" id="chkCraters" class="checkbox-input">
+            <span class="checkbox-custom"></span>
+          </label>
+        </div>
+
+        <div id="cratersSection" class="hidden">
+          <div class="param-modifier">
+            <label>Cantidad: <input type="text" id="cDenVal" class="value-input" value="3" /></label>
+            <input type="range" id="cDen" class="slider" min="0" max="10" step="1" value="3">
+          </div>
+
+          <div class="param-modifier">
+            <label>Tamaño: <input type="text" id="cSizeVal" class="value-input" value="0.5" /></label>
+            <input type="range" id="cSize" class="slider" min="0.1" max="1.0" step="0.1" value="0.5">
+          </div>
+
+          <div class="param-modifier">
+            <label>Profundidad: <input type="text" id="cDepthVal" class="value-input" value="0.6" /></label>
+            <input type="range" id="cDepth" class="slider" min="0.1" max="1.0" step="0.1" value="0.6">
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div id="loading" class="loading hidden">
+    <div class="spinner"></div>
+    <span>Cargando...</span>
+  </div>
+
+  <script type="text/javascript" src="/eel.js"></script>
+    <script type="module" src="home/main.js?v=42"></script>
+</body>
+</html>

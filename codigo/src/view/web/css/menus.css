@@ -1,0 +1,314 @@
+/* =============================================================================
+   LATERAL MENUS - Side Panel Menus (Options & Export)
+   ============================================================================= */
+
+.lateral-menu {
+  position: fixed;
+  right: 340px;
+  background-color: var(--level-2);
+  border: 1px solid var(--level-3);
+  border-radius: 8px;
+  padding: 0;
+  min-width: 220px;
+  max-width: 280px;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.2s ease, visibility 0.2s ease, top 0.3s ease;
+  opacity: 1;
+  visibility: visible;
+}
+
+.lateral-menu-options {
+  top: auto;
+  min-width: 260px;
+}
+
+.lateral-menu-export {
+  top: auto;
+}
+
+.lateral-menu.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  display: block;
+}
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px;
+  border-bottom: 1px solid var(--level-3);
+}
+
+.menu-title {
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.menu-section {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.menu-label {
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.menu-label-block {
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  display: block;
+}
+
+.menu-label-inline {
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.menu-param {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.menu-checkbox-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.grid-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.grid-options.hidden {
+  display: none;
+}
+
+/* --- Menu Inputs --- */
+.menu-select,
+.menu-input {
+  background-color: var(--level-2);
+  border: 1px solid var(--level-3);
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  outline: none;
+  min-width: 100px;
+  transition: border-color 0.2s;
+}
+
+.menu-select:focus,
+.menu-input:focus {
+  border-color: var(--main-color);
+}
+
+.menu-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23FAFAFA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+.menu-input-small {
+  background: var(--level-1);
+  border: 1px solid transparent;
+  border-radius: 4.5px;
+  padding: 6px 10px;
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  width: 100px;
+  text-align: center;
+  transition: all 0.2s;
+  background-image: linear-gradient(var(--level-1), var(--level-1)),
+                    linear-gradient(180deg, var(--level-1) 0%, var(--level-3) 100%);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+}
+
+.menu-input-small:focus,
+.menu-input-small:hover {
+  border-color: var(--level-4);
+}
+
+.menu-input-hex {
+  background: var(--level-1);
+  border: 1px solid transparent;
+  border-radius: 4.5px;
+  padding: 6px 10px;
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  outline: none;
+  width: 90px;
+  text-align: center;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  background-image: linear-gradient(var(--level-1), var(--level-1)),
+                    linear-gradient(180deg, var(--level-1) 0%, var(--level-3) 100%);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+}
+
+.menu-input-hex:focus,
+.menu-input-hex:hover {
+  border-color: var(--level-4);
+}
+
+.menu-input-with-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --- Scale Buttons --- */
+.button-group {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.scale-button {
+  background: var(--level-1);
+  border: 1px solid var(--level-3);
+  border-radius: 6px;
+  padding: 6px 14px;
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 50px;
+}
+
+.scale-button:hover:not(:disabled) {
+  background: var(--level-2);
+  border-color: var(--main-color);
+}
+
+.scale-button.active {
+  background: var(--main-color);
+  border-color: var(--main-color);
+  color: #000;
+}
+
+.scale-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* --- Path Display --- */
+.path-input-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.path-display {
+  background: var(--level-1);
+  border: 1px solid var(--level-3);
+  border-radius: 4.5px;
+  padding: 6px 10px;
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  background-image: linear-gradient(var(--level-1), var(--level-1)),
+                    linear-gradient(180deg, var(--level-1) 0%, var(--level-3) 100%);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+}
+
+.explore-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 33px;
+  height: 33px;
+}
+
+.explore-button:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.explore-button:active {
+  transform: scale(0.95);
+}
+
+.explore-button svg {
+  display: block;
+}
+
+.menu-button-secondary {
+  background: var(--level-2);
+  border: 1px solid var(--level-3);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-button-secondary:hover {
+  background: var(--level-3);
+  border-color: var(--main-color);
+}
+
+.menu-item.menu-item-vertical {
+  flex-direction: column;
+  align-items: stretch;
+}

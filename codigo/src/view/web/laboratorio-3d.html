@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VISTAR - Laboratorio 3D</title>
+  <link rel="stylesheet" href="styles.css?v=41" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "/vendor/three/0.157.0/build/three.module.js"
+      }
+    }
+  </script>
+  <style>
+    html, body { 
+      height: 100%; 
+      margin: 0; 
+      overflow: hidden; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    
+    .toolbar { 
+      position: fixed; 
+      top: 10px; 
+      left: 10px; 
+      z-index: 10; 
+      display: flex; 
+      gap: 8px;
+      flex-wrap: wrap;
+      max-width: calc(100vw - 360px);
+    }
+    
+    .btn { 
+      background: #1e1e1e; 
+      color: white; 
+      border: 1px solid #444; 
+      padding: 8px 12px; 
+      border-radius: 6px; 
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+    
+    .btn:hover:not(:disabled) { 
+      background: #2a2a2a; 
+      border-color: #666;
+      transform: translateY(-1px);
+    }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    #threeRoot { 
+      position: fixed; 
+      inset: 0; 
+      background: #000; 
+    }
+    
+    .sidepanel { 
+      position: fixed; 
+      right: 10px; 
+      top: 10px; 
+      bottom: 10px; 
+      width: 320px; 
+      background: rgba(18,18,18,0.95); 
+      color: #ddd; 
+      border: 1px solid #444; 
+      border-radius: 10px; 
+      padding: 16px; 
+      z-index: 11; 
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    
+    .sidepanel::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .sidepanel::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+    
+    .sidepanel::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+    
+    .sidepanel::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .sidepanel h3 { 
+      margin: 12px 0 10px; 
+      font-size: 16px;
+      font-weight: 600;
+      color: #ff7825;
+      border-bottom: 1px solid #333;
+      padding-bottom: 6px;
+    }
+    
+    .row { 
+      display: flex; 
+      gap: 8px; 
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    
+    .col { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 6px; 
+    }
+    
+    .text, select, input[type=number] { 
+      background: #111; 
+      color: #eee; 
+      border: 1px solid #333; 
+      border-radius: 6px; 
+      padding: 6px 8px;
+      font-size: 13px;
+      transition: border-color 0.2s ease;
+    }
+    
+    .text:focus, select:focus, input[type=number]:focus {
+      outline: none;
+      border-color: #ff7825;
+    }
+    
+    .divider { 
+      height: 1px; 
+      background: #333; 
+      margin: 12px 0; 
+    }
+    
+    .poi-item { 
+      padding: 6px 8px; 
+      border: 1px solid #333; 
+      border-radius: 6px; 
+      margin-bottom: 6px; 
+    }
+    
+    .label { 
+      font-size: 12px;
+      color: #aaa;
+      font-weight: 500;
+    }
+    
+    /* Toast improvements */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .toast.success {
+      background: rgba(34, 197, 94, 0.9);
+      color: white;
+    }
+    
+    .toast.error {
+      background: rgba(239, 68, 68, 0.9);
+      color: white;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+  </style>
+  <script>
+    // Cuando se llega a esta página, ya deberíamos tener dependencias precargadas desde /home.
+  </script>
+  <script src="/eel.js"></script>
+</head>
+<body>
+  <div class="toolbar">
+    <button id="btnExit" class="btn">Salir del laboratorio</button>
+    <button id="btnExportPng" class="btn">Exportar PNG</button>
+    <button id="btnExportObj" class="btn">Exportar OBJ</button>
+    <button id="btnExportSvg" class="btn">Exportar SVG</button>
+    <select id="visMode" class="text" title="Visualización">
+      <option value="mesh">Mesh 3D</option>
+      <option value="contours">Líneas topográficas</option>
+    </select>
+  </div>
+  <div id="threeRoot"></div>
+  <!-- Loader bottom-left -->
+  <div id="loading" class="loading hidden" aria-live="polite" aria-busy="true">
+    <span class="spinner"></span>
+    <span class="txt">Cargando…</span>
+  </div>
+  <!-- Persistent status banner (bottom-left) -->
+  <div id="statusBanner" class="toast hidden" style="left:20px; right:auto;"></div>
+
+  <aside class="sidepanel">
+    <h3>POIs</h3>
+    <div class="col">
+      <div class="row">
+        <input id="poiName" class="text" placeholder="Nombre" />
+      </div>
+      <div class="row">
+        <label>Tipo</label>
+        <select id="poiType" class="text">
+          <option value="building">Edificio</option>
+          <option value="vehicle">Vehículo</option>
+          <option value="air">Aéreo</option>
+        </select>
+      </div>
+      <div class="row">
+        <label>X</label><input id="poiX" type="number" class="text" value="10" />
+        <label>Z</label><input id="poiZ" type="number" class="text" value="10" />
+      </div>
+      <div class="row">
+        <label>Orientación</label><input id="poiYaw" type="number" class="text" value="0" />
+      </div>
+      <button id="btnAddPoi" class="btn">Añadir POI</button>
+      <div class="row">
+        <label>POI</label>
+        <select id="poiSelect" class="text"></select>
+      </div>
+      <div class="row">
+        <button id="btnDeletePoi" class="btn">Eliminar POI</button>
+        <button id="btnDeleteAllPois" class="btn">Eliminar todos</button>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="col">
+      <h3>Labels</h3>
+      <div class="row"><label><input id="lblBg" type="checkbox" checked /> Background</label></div>
+      <div class="row"><label>Color fondo</label><input id="lblBgColor" class="text" value="rgba(0,0,0,0.5)" /></div>
+      <div class="row"><label><input id="lblBold" type="checkbox" checked /> Negrita</label></div>
+      <div class="row"><label><input id="lblItalic" type="checkbox" /> Cursiva</label></div>
+      <div class="row"><label>Conector</label>
+        <select id="lblConnector" class="text">
+          <option value="solid">Línea continua</option>
+          <option value="dashed">Línea punteada</option>
+        </select>
+      </div>
+      <button id="btnApplyLabels" class="btn">Aplicar a todos</button>
+    </div>
+    <div class="divider"></div>
+    <div class="col">
+      <h3>Áreas</h3>
+      <div class="row"><input id="areaName" class="text" placeholder="Nombre área" /></div>
+      <div class="row"><label>Forma</label>
+        <select id="areaShape" class="text">
+          <option value="square">Cuadrada</option>
+          <option value="circle">Circular</option>
+        </select>
+      </div>
+      <div class="row"><label>Patrón</label>
+        <select id="areaPattern" class="text">
+          <option value="lines">Líneas paralelas</option>
+          <option value="points">Puntos</option>
+        </select>
+      </div>
+      <div class="row">
+        <label>X</label><input id="areaX" type="number" class="text" value="20" />
+        <label>Z</label><input id="areaZ" type="number" class="text" value="20" />
+      </div>
+      <div class="row"><label>Tamaño</label><input id="areaSize" type="number" class="text" value="10" /></div>
+      <button id="btnAddArea" class="btn">Añadir Área</button>
+    </div>
+    <div class="divider"></div>
+    <div class="col">
+      <h3>Carreteras</h3>
+      <div class="row">
+        <label>De</label>
+        <select id="roadFrom" class="text"></select>
+        <label>a</label>
+        <select id="roadTo" class="text"></select>
+      </div>
+      <div class="row">
+        <label>Color</label><input id="roadColor" class="text" value="#ff7825" />
+      </div>
+      <div class="row">
+        <label>Grosor</label><input id="roadWidth" type="number" class="text" value="2" />
+        <label>Opacidad</label><input id="roadOpacity" type="number" class="text" value="0.9" step="0.1" />
+      </div>
+      <button id="btnGenRoad" class="btn">Generar carretera</button>
+    </div>
+  </aside>
+
+  <script>
+    // Detector de error de librerías 3D
+    window.__lab3dBooted = false;
+    window.addEventListener('load', function(){
+      setTimeout(function(){
+        if (!window.__lab3dBooted) {
+          var sb = document.getElementById('statusBanner');
+          if (sb) { sb.textContent = 'No se pudieron cargar librerías 3D. Verifica dependencias locales.'; sb.classList.remove('hidden'); }
+        }
+      }, 5000);
+    });
+  </script>
+  <script type="module" src="laboratorio-3d/main.js?v=44"></script>
+</body>
+</html>

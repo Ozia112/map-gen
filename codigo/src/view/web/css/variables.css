@@ -1,0 +1,23 @@
+/* =============================================================================
+   VARIABLES - Design Tokens
+   ============================================================================= */
+
+:root {
+  /* Neutral Gradient */
+  --level-0: #030303;
+  --level-1: #232323;
+  --level-2: #434343;
+  --level-3: #636363;
+  --level-4: #838383;
+
+  /* Hologram Map Collection */
+  --main-color: #FF7825;
+  --h-main-color: #F4B55B;
+
+  /* Text Collection */
+  --text-color: #FAFAFA;
+}
+
+* {
+  box-sizing: border-box;
+}

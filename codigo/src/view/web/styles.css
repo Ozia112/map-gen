@@ -1,0 +1,11 @@
+/* =============================================================================
+   MAIN STYLESHEET - Modular CSS Architecture
+   Imports all CSS modules for the application
+   ============================================================================= */
+
+@import url('css/variables.css');
+@import url('css/layout.css');
+@import url('css/buttons.css');
+@import url('css/menus.css');
+@import url('css/controls.css');
+@import url('css/utils.css');

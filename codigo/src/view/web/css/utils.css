@@ -1,0 +1,62 @@
+/* =============================================================================
+   UTILITIES - Helper Classes & Global Styles
+   ============================================================================= */
+
+.hidden {
+  display: none;
+}
+
+/* --- Loading Spinner --- */
+.loading {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(3, 3, 3, 0.9);
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--level-3);
+  z-index: 1000;
+  color: var(--text-color);
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.loading.hidden {
+  display: none;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--level-3);
+  border-top-color: var(--main-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Scrollbar --- */
+.side-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.side-panel::-webkit-scrollbar-track {
+  background: var(--level-0);
+}
+
+.side-panel::-webkit-scrollbar-thumb {
+  background: var(--level-3);
+  border-radius: 4px;
+}
+
+.side-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--level-4);
+}

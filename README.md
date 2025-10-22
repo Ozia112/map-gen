@@ -30,26 +30,31 @@
 # 1. Clonar o descargar el proyecto
 cd map-gen
 
-# 2. Crear entorno virtual (recomendado)
+# 2. Navegar a la carpeta de código
+cd codigo
+
+# 3. Crear entorno virtual (recomendado)
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1  # Windows PowerShell
 # source .venv/bin/activate    # Linux/macOS
 
-# 3. Instalar dependencias
+# 4. Instalar dependencias
 pip install -r requirements.txt
-
-# 4. Verificar instalación
-python verify_system.py
 ```
 
 ### Ejecución
 
 ```powershell
+# Regresar a la raíz del proyecto
+cd ..
+
 # Iniciar aplicación
 python run.py
 
 # La aplicación abrirá en: http://127.0.0.1:8080
 ```
+
+**Nota**: El proyecto usa una estructura organizada donde todo el código está en `codigo/` y la documentación en `docs/`. El launcher `run.py` está en la raíz y configura automáticamente los paths necesarios.
 
 **Opciones adicionales:**
 
@@ -62,32 +67,44 @@ python run.py --no-browser     # No abrir navegador automáticamente
 
 ## 📁 Estructura del Proyecto
 
-```aascii
+**Versión 2.2.0** - Octubre 22, 2025
+
+```ascii
 map-gen/
-├─ src/                      # Código fuente (Arquitectura MVC)
-│  ├─ main.py                # Punto de entrada
-│  ├─ config.py              # Configuración global
-│  ├─ model/                 # Modelo (estado y lógica)
-│  │  └─ map_model.py
-│  ├─ controller/            # Controladores (orquestación)
-│  │  ├─ map_controller.py
-│  │  ├─ render_controller.py
-│  │  └─ terrain_generator.py
-│  └─ view/                  # Vista (interfaz)
-│     ├─ web_view_controller.py
-│     ├─ visualization.py
-│     └─ web/
-│        ├─ index.html
-│        ├─ styles.css
-│        └─ app.js
-├─ tests/                    # Tests automatizados (pytest)
-├─ docs/                     # Documentación completa
-│  ├─ DOCUMENTATION.md       # 📚 Documentación principal
-│  └─ CHANGELOG.md           # 📝 Historial de cambios
-├─ generados/                # Mapas exportados
-├─ run.py                    # Launcher script
-└─ requirements.txt          # Dependencias
+├─ codigo/                   # 📦 TODO EL CÓDIGO
+│  ├─ src/                   #    Código fuente (Arquitectura MVC)
+│  │  ├─ main.py             #    Punto de entrada
+│  │  ├─ model/              #    Modelo (estado y lógica)
+│  │  │  └─ map_model.py
+│  │  ├─ controller/         #    Controladores (orquestación)
+│  │  │  ├─ config.py        #    Configuración global
+│  │  │  ├─ map_controller.py
+│  │  │  ├─ render_controller.py
+│  │  │  └─ terrain_generator.py
+│  │  ├─ view/               #    Vista (interfaz)
+│  │  │  ├─ web_view_controller.py
+│  │  │  ├─ visualization.py
+│  │  │  └─ web/             #    UI Web
+│  │  │     ├─ home/         #    Interfaz principal
+│  │  │     └─ laboratorio-3d/  # Editor 3D
+│  │  └─ utils/              #    Utilidades
+│  ├─ tests/                 #    Tests automatizados (pytest)
+│  ├─ generados/             #    Mapas exportados
+│  ├─ requirements.txt       #    Dependencias Python
+│  └─ .venv/                 #    Entorno virtual
+├─ docs/                     # 📚 DOCUMENTACIÓN
+│  ├─ INDEX.md               #    Índice de documentación
+│  ├─ CHANGELOG.md           #    Historial de cambios
+│  ├─ architecture.md        #    Arquitectura del sistema
+│  ├─ development.md         #    Guía de desarrollo
+│  └─ [más archivos .md]
+├─ .gitignore
+├─ LICENSE
+├─ README.md                 # Este archivo
+└─ run.py                    # 🚀 Launcher (único ejecutable en raíz)
 ```
+
+**Separación código/documentación**: Todo el código está auto-contenido en `codigo/`, mientras que la documentación está en `docs/`. Esto facilita la navegación, el mantenimiento y el deployment.
 
 ---
 
@@ -144,9 +161,13 @@ Al iniciar la aplicación, se abre una interfaz web con los siguientes controles
 
 #### 💾 Exportación
 
-- **Guardar PNG**: Imagen de alta calidad
-- **Guardar SVG**: Gráfico vectorial escalable
-- Archivos guardados en `./generados/`
+- **Guardar PNG**: Imagen de alta calidad (300 DPI)
+- **Guardar SVG**: Gráfico vectorial optimizado
+  - ✨ **Optimización automática**: Estructura reorganizada para mejor edición
+  - 📊 **~65% reducción de grupos**: De ~150 a ~55 grupos
+  - 🏷️ **Nomenclatura inteligente**: Elementos clasificados y renombrados
+  - 📝 **Metadata preservada**: Parámetros de renderizado incluidos
+- Archivos guardados en `./generados/` o ubicación elegida
 
 ---
 

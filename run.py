@@ -60,8 +60,9 @@ def check_and_kill_processes():
         print(f"Advertencia al verificar procesos: {e}")
         # Continuar de todas formas
 
-# Agregar el directorio src al path de Python
-src_dir = os.path.join(os.path.dirname(__file__), 'src')
+# Agregar el directorio codigo/src al path de Python
+codigo_dir = os.path.join(os.path.dirname(__file__), 'codigo')
+src_dir = os.path.join(codigo_dir, 'src')
 sys.path.insert(0, src_dir)
 
 # Importar y ejecutar main
